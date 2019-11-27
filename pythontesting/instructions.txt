@@ -1,1 +1,4 @@
-I've been generating the plots in Atom using a cool package called Hydrogen. I just select all the code using Command->A and then generate the plot with Command-R. Just make sure your data files are stored locally to the plotsorts.py and named the same as what I named them. I commented out some line of best fit and upper-bound graphing which is cool but unnecessary right now. 
+I've been generating the plots in Atom using a cool package called Hydrogen. 
+I select all the code using Command->A and then generate the plot with Command-R. 
+Just make sure your data files are stored locally to the plotsorts.py and named the same as what I named them. 
+I commented out some line of best fit and upper-bound graphing which is cool but unnecessary right now. 
