@@ -19,8 +19,8 @@ enum Mode {
 };
 
 int main(int argc, char** argv) {
-    if (argc < 7) {
-        fprintf(stderr, "[!] Args: <seed> <mode (random, sorted, reverse_sorted)> <max array size> <array size step> <max num> <max radix>\n");
+    if (argc < 8) {
+        fprintf(stderr, "[!] Args: <seed> <mode (random, sorted, reverse_sorted)> <max array size> <array size step> <repetitions> <max num> <max radix>\n");
         return 1;
     }
 
@@ -40,8 +40,9 @@ int main(int argc, char** argv) {
 
     int max_array_size = atoi(argv[3]);
     int array_size_step = atoi(argv[4]);
-    int max_num = atoi(argv[5]);
-    int max_radix = atoi(argv[6]);
+    int repetitions = atoi(argv[5]);
+    int max_num = atoi(argv[6]);
+    int max_radix = atoi(argv[7]);
 
     FILE* merge_output = fopen("output/merge.csv", "w");
     FILE* quick_output = fopen("output/quick.csv", "w");
@@ -69,34 +70,54 @@ int main(int argc, char** argv) {
         printf("\rn = %d / %d", n, max_array_size);
         fflush(stdout);
 
-        auto start = std::chrono::high_resolution_clock::now();
-        memcpy(secondary_array, base_array, n * sizeof(int));
-        Quicksort(secondary_array, 0, n-1);
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+        long total_time = 0;
+        for (int i = 0; i < repetitions; i++) {
+            memcpy(secondary_array, base_array, n * sizeof(int));
 
-        fprintf(quick_output, "%d,%ld\n", n, duration);
+            auto start = std::chrono::high_resolution_clock::now();
+            Quicksort(secondary_array, 0, n-1);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
-        start = std::chrono::high_resolution_clock::now();
-        memcpy(secondary_array, base_array, n * sizeof(int));
-        MergeSort(secondary_array, 0, n-1);
-        end = std::chrono::high_resolution_clock::now();
-        duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            total_time += duration;
+        }
 
-        fprintf(merge_output, "%d,%ld\n", n, duration);
+        fprintf(quick_output, "%d,%ld\n", n, total_time/repetitions);
+
+        total_time = 0;
+        for (int i = 0; i < repetitions; i++) {
+            memcpy(secondary_array, base_array, n * sizeof(int));
+
+            auto start = std::chrono::high_resolution_clock::now();
+            MergeSort(secondary_array, 0, n-1);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+
+            total_time += duration;
+        }
+
+        fprintf(merge_output, "%d,%ld\n", n, total_time/repetitions);
 
         for (int r = 2; r <= max_radix; r++) {
             SortingItem* radix_array = (SortingItem*) malloc(n * sizeof(SortingItem));
-            for (int i = 0; i < n; i++) {
-                radix_array[i].value = base_array[i];
+
+            total_time = 0;
+
+            for (int i = 0; i < repetitions; i++) {
+                for (int j = 0; j < n; j++) {
+                    radix_array[j].value = base_array[j];
+                }
+
+                auto start = std::chrono::high_resolution_clock::now();
+                radix_sort(radix_array, n, max_num, r);
+                auto end = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+
+                total_time += duration;
             }
 
-            start = std::chrono::high_resolution_clock::now();
-            radix_sort(radix_array, n, max_num, r);
-            end = std::chrono::high_resolution_clock::now();
-            duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+            fprintf(radix_output, "%d,%d,%ld\n", r, n, total_time/repetitions);
 
-            fprintf(radix_output, "%d,%d,%ld\n", r, n, duration);
 
             free(radix_array);
         }

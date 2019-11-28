@@ -37,7 +37,7 @@ plt.scatter(arrsize_m, runtime_m, s=5, c='b', alpha = 0.6, label='mergesort')
 #labeling & display
 plt.legend()
 plt.xlabel('Array Size')
-plt.ylabel('Runtime (nanoseconds)')
+plt.ylabel('Runtime (microseconds)')
 plt.title('Runtime vs Array Size of Comparison Sorting Algorithms')
 plt.show()
 
