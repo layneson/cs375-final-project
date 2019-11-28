@@ -1,45 +1,34 @@
-/* C++ implementation of QuickSort */
 #include <stdio.h>
 
-int partition(int *a,int start,int end)
-{
-    int pivot=a[end];
-    //P-index indicates the pivot value index
-
-    int P_index=start;
-    int i,t; //t is temporary variable
-
-    //Here we will check if array value is
-    //less than pivot
-    //then we will place it at left side
-    //by swapping
-
-    for(i=start;i<end;i++)
-    {
-    	if(a[i]<=pivot)
-        {
-            t=a[i];
-            a[i]=a[P_index];
-            a[P_index]=t;
-            P_index++;
-        }
-     }
-     //Now exchanging value of
-     //pivot and P-index
-      t=a[end];
-      a[end]=a[P_index];
-      a[P_index]=t;
-
-     //at last returning the pivot value index
-     return P_index;
+void swap(int*a , int first, int second) {
+	int t = a[first];
+	a[first] = a[second];
+	a[second] = t;
 }
 
-void Quicksort(int *a,int start,int end)
-{
-    if(start<end)
-    {
-         int P_index=partition(a,start,end);
-             Quicksort(a,start,P_index-1);
-             Quicksort(a,P_index+1,end);
+int partition(int *a, int left, int right) {
+    int pivot = a[right];
+
+    int curr_index = left;
+    int i;
+		int holder;
+
+    for(i = left; i < right; i++) {
+    	if(a[i] <= pivot) {
+						swap(a,i,curr_index);
+            curr_index++;
+        }
+     }
+
+		 swap(a,right,curr_index);
+
+     return curr_index;
+ }
+
+ void Quicksort(int *a,int left,int right) {
+    if(left < right) {
+         int curr_index = partition(a,left,right);
+				 Quicksort(a,left, curr_index-1);
+				 Quicksort(a,curr_index+1, right);
     }
 }
