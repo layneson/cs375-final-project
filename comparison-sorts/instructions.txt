@@ -1,5 +1,0 @@
-To generate new datasets and plot them:  
-
-Look inside the main functions of mergesort.cpp and quicksort.cpp, and you will find a section marked as /*ALL TESTING VARIABLES HERE*/ - adjust them to your specs.
-Change the variables in the makefile to compile and run quicksort (which will output to outputquick.txt), then mergesort (which will output to outputmerge.txt) 
-This created 2 comma separated value (CSV) formatted txt files, which are compatible with python's matplotlib. My plotsorts.py should now be able to run and show a scatter plot of arraysize versus running time.
