@@ -18,6 +18,33 @@ enum Mode {
     REVERSE_SORTED
 };
 
+void gen_array(std::mt19937 eng, std::uniform_int_distribution<int> dist, Mode mode, int* array, int n, int max_num) {
+    switch (mode) {
+        case RANDOM: {
+            for (int i = 0; i < n; i++) {
+                array[i] = dist(eng);
+            }
+            break;
+        } case SORTED: {
+            int base = dist(eng);
+            if (base + n >= max_num) base = base % max_num;
+
+            for (int i = 0; i < n; i++) {
+                array[i] = base + i;
+            }
+            break;
+        } case REVERSE_SORTED: {
+            int base = dist(eng);
+            if (base + n >= max_num) base = base % max_num;
+
+            for (int i = 0; i < n; i++) {
+                array[i] = base + n - 1 - i;
+            }
+            break;
+        }
+    }
+}
+
 int main(int argc, char** argv) {
     if (argc < 8) {
         fprintf(stderr, "[!] Args: <seed> <mode (random, sorted, reverse_sorted)> <max array size> <array size step> <repetitions> <max num> <max radix>\n");
@@ -56,14 +83,12 @@ int main(int argc, char** argv) {
     fprintf(quick_output, "n,t\n");
     fprintf(radix_output, "r,n,t\n");
 
-    std::default_random_engine rand_eng(seed);
+    std::mt19937 rand_eng(seed);
     std::uniform_int_distribution<int> rng(0, max_num-1);
 
     for (int n = array_size_step; n <= max_array_size; n += array_size_step) {
         int* base_array = (int*) malloc(n * sizeof(int));
-        for (int i = 0; i < n; i++) {
-            base_array[i] = rng(rand_eng);
-        }
+        gen_array(rand_eng, rng, mode, base_array, n, max_num);
 
         int* secondary_array = (int*) malloc(n * sizeof(int));
 
