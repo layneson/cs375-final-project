@@ -3,10 +3,11 @@
 #include <string.h>
 
 #include "radixsort.hpp"
+#include "memory.hpp"
 
 void counting_sort(SortingItem* array, int n, int k) {
-    SortingItem* b = (SortingItem*) malloc(n * sizeof(SortingItem));
-    int* c = (int*) malloc(k * sizeof(int));
+    SortingItem* b = (SortingItem*) measure_malloc(n * sizeof(SortingItem));
+    int* c = (int*) measure_malloc(k * sizeof(int));
 
     for (int i = 0; i < k; i++) {
         c[i] = 0;

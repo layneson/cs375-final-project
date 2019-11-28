@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from numpy.polynomial.polynomial import polyfit
 import matplotlib.pyplot as plt
+import sys
+
 plt.style.use('dark_background')
 # fig, ax = plt.subplots()
 plt.figure(figsize=(12,8))
@@ -13,6 +15,8 @@ data_r  = pd.read_csv("output/radix.csv")
 
 # only grab one radix for now.
 RADIX = 16
+if len(sys.argv) > 1:
+    RADIX = int(sys.argv[1])
 data_r = data_r.loc[data_r['r'] == RADIX]
 
 # data_log_m  = pd.read_csv("outputlogmerge.txt")
@@ -25,6 +29,10 @@ arrsize_q = data_q['n']
 runtime_q = data_q['t']
 arrsize_r = data_r['n']
 runtime_r = data_r['t']
+
+memory_m = data_m['m']
+memory_q = data_q['m']
+memory_r = data_r['m']
 
 # x = data_log_m['x']
 # xlgx = data_log_m['y']
@@ -47,5 +55,22 @@ plt.legend()
 plt.xlabel('Array Size')
 plt.ylabel('Runtime (microseconds)')
 plt.title('Runtime vs Array Size of Comparison and Non-Comparison Sorting Algorithms')
+
+plt.savefig("output/runtime.png")
+
 plt.show()
 
+# secondary graph of memory.
+plt.figure(figsize=(12,8))
+plt.scatter(arrsize_q, memory_q, s=5, c='r', alpha = 0.6, label='quicksort')
+plt.scatter(arrsize_m, memory_m, s=5, c='b', alpha = 0.6, label='mergesort')
+plt.scatter(arrsize_r, memory_r, s=5, c='g', alpha = 0.6, label='radixsort (radix = {})'.format(RADIX))
+
+plt.legend()
+plt.xlabel('Array Size')
+plt.ylabel('Memory Usage (bytes)')
+plt.title('Memory Usage vs Array Size of Comparison and Non-Comparison Sorting Algorithms')
+
+plt.savefig("output/memory.png")
+
+plt.show()

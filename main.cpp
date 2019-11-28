@@ -11,6 +11,7 @@
 #include "radixsort.hpp"
 #include "quicksort.hpp"
 #include "mergesort.hpp"
+#include "memory.hpp"
 
 enum Mode {
     RANDOM,
@@ -79,9 +80,9 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    fprintf(merge_output, "n,t\n");
-    fprintf(quick_output, "n,t\n");
-    fprintf(radix_output, "r,n,t\n");
+    fprintf(merge_output, "n,t,m\n");
+    fprintf(quick_output, "n,t,m\n");
+    fprintf(radix_output, "r,n,t,m\n");
 
     std::mt19937 rand_eng(seed);
     std::uniform_int_distribution<int> rng(0, max_num-1);
@@ -95,8 +96,9 @@ int main(int argc, char** argv) {
         printf("\rn = %d / %d", n, max_array_size);
         fflush(stdout);
 
-        long total_time = 0;
         for (int i = 0; i < repetitions; i++) {
+            clear_memory_usage();
+
             memcpy(secondary_array, base_array, n * sizeof(int));
 
             auto start = std::chrono::high_resolution_clock::now();
@@ -104,13 +106,13 @@ int main(int argc, char** argv) {
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
-            total_time += duration;
+            fprintf(quick_output, "%d,%ld,%lu\n", n, duration, get_memory_usage());
         }
 
-        fprintf(quick_output, "%d,%ld\n", n, total_time/repetitions);
 
-        total_time = 0;
         for (int i = 0; i < repetitions; i++) {
+            clear_memory_usage();
+
             memcpy(secondary_array, base_array, n * sizeof(int));
 
             auto start = std::chrono::high_resolution_clock::now();
@@ -118,17 +120,16 @@ int main(int argc, char** argv) {
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
-            total_time += duration;
+            fprintf(merge_output, "%d,%ld,%lu\n", n, duration, get_memory_usage());
         }
 
-        fprintf(merge_output, "%d,%ld\n", n, total_time/repetitions);
 
         for (int r = 2; r <= max_radix; r++) {
             SortingItem* radix_array = (SortingItem*) malloc(n * sizeof(SortingItem));
 
-            total_time = 0;
-
             for (int i = 0; i < repetitions; i++) {
+                clear_memory_usage();
+
                 for (int j = 0; j < n; j++) {
                     radix_array[j].value = base_array[j];
                 }
@@ -138,11 +139,8 @@ int main(int argc, char** argv) {
                 auto end = std::chrono::high_resolution_clock::now();
                 auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 
-                total_time += duration;
+                fprintf(radix_output, "%d,%d,%ld,%lu\n", r, n, duration, get_memory_usage());
             }
-
-            fprintf(radix_output, "%d,%d,%ld\n", r, n, total_time/repetitions);
-
 
             free(radix_array);
         }
