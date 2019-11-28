@@ -7,8 +7,8 @@ plt.style.use('dark_background')
 plt.figure(figsize=(12,8))
 
 # reading in files. The log files are just CSVs of each algorithm's O(1) time * nlgn for even values 0 through 1500
-data_m  = pd.read_csv("outputmerge.csv")
-data_q  = pd.read_csv("outputquick.csv")
+data_m  = pd.read_csv("output/merge.csv")
+data_q  = pd.read_csv("output/quick.csv")
 
 # data_log_m  = pd.read_csv("outputlogmerge.txt")
 # data_square_q  = pd.read_csv("outputsquarequick.txt")

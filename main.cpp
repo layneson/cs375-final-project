@@ -43,9 +43,9 @@ int main(int argc, char** argv) {
     int max_num = atoi(argv[5]);
     int max_radix = atoi(argv[6]);
 
-    FILE* merge_output = fopen("outputmerge.csv", "w");
-    FILE* quick_output = fopen("outputquick.csv", "w");
-    FILE* radix_output = fopen("outputradix.csv", "w");
+    FILE* merge_output = fopen("output/merge.csv", "w");
+    FILE* quick_output = fopen("output/quick.csv", "w");
+    FILE* radix_output = fopen("output/radix.csv", "w");
     if (!merge_output || !quick_output || !radix_output) {
         fprintf(stderr, "[!] Failed to open output file!\n");
         return 1;
@@ -108,6 +108,8 @@ int main(int argc, char** argv) {
     fclose(merge_output);
     fclose(quick_output);
     fclose(radix_output);
+
+    printf("\n");
 
     return 0;
 }
