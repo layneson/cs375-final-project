@@ -14,7 +14,7 @@ void Merge(int *a, int left, int right, int mid) {
 	int i = left;
 	int x = 0;
 	int j = mid + 1;
-    int* temparr = (int*) measure_malloc((high - low + 1) * sizeof(int));
+    int* temparr = (int*) measure_malloc((right - left + 1) * sizeof(int));
 
 	while (i <= mid && j <= right) {
 		temparr[x] = (a[i] < a[j]) ? a[i] : a[j];
