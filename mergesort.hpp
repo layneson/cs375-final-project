@@ -1,2 +1,2 @@
 
-void MergeSort(int *a, int low, int high);
+void MergeSort(int *a, int left, int right);
