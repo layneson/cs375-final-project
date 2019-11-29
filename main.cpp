@@ -46,9 +46,14 @@ void gen_array(std::mt19937 eng, std::uniform_int_distribution<int> dist, Mode m
     }
 }
 
+enum RepMode {
+    SAME,
+    NEW
+};
+
 int main(int argc, char** argv) {
-    if (argc < 8) {
-        fprintf(stderr, "[!] Args: <seed> <mode (random, sorted, reverse_sorted)> <max array size> <array size step> <repetitions> <max num> <max radix>\n");
+    if (argc < 9) {
+        fprintf(stderr, "[!] Args: <seed> <gen mode (random, sorted, reverse_sorted)> <max array size> <array size step> <repetitions> <rep mode> <max num> <max radix>\n");
         return 1;
     }
 
@@ -62,15 +67,25 @@ int main(int argc, char** argv) {
     } else if (strcmp(argv[2], "reverse_sorted") == 0) {
         mode = REVERSE_SORTED;
     } else {
-        fprintf(stderr, "[!] Unknown mode '%s' (must be one of 'random', 'sorted', or 'reverse_sorted'!\n", argv[2]);
+        fprintf(stderr, "[!] Unknown gen mode '%s' (must be one of 'random', 'sorted', or 'reverse_sorted')!\n", argv[2]);
         return 1;
     }
 
     int max_array_size = atoi(argv[3]);
     int array_size_step = atoi(argv[4]);
     int repetitions = atoi(argv[5]);
-    int max_num = atoi(argv[6]);
-    int max_radix = atoi(argv[7]);
+
+    RepMode rep_mode;
+    if (strcmp(argv[6], "same") == 0) {
+        rep_mode = SAME;
+    } else if (strcmp(argv[6], "new") == 0) {
+        rep_mode = NEW;
+    } else {
+        fprintf(stderr, "[!] Unknown rep mode '%s' (must be one of 'same' or 'new')!\n", argv[6]);
+    }
+
+    int max_num = atoi(argv[7]);
+    int max_radix = atoi(argv[8]);
 
     FILE* merge_output = fopen("output/merge.csv", "w");
     FILE* quick_output = fopen("output/quick.csv", "w");
@@ -99,6 +114,7 @@ int main(int argc, char** argv) {
         for (int i = 0; i < repetitions; i++) {
             clear_memory_usage();
 
+            if (rep_mode == NEW) gen_array(rand_eng, rng, mode, base_array, n, max_num);
             memcpy(secondary_array, base_array, n * sizeof(int));
 
             auto start = std::chrono::high_resolution_clock::now();
@@ -113,6 +129,7 @@ int main(int argc, char** argv) {
         for (int i = 0; i < repetitions; i++) {
             clear_memory_usage();
 
+            if (rep_mode == NEW) gen_array(rand_eng, rng, mode, base_array, n, max_num);
             memcpy(secondary_array, base_array, n * sizeof(int));
 
             auto start = std::chrono::high_resolution_clock::now();
@@ -130,6 +147,7 @@ int main(int argc, char** argv) {
             for (int i = 0; i < repetitions; i++) {
                 clear_memory_usage();
 
+                if (rep_mode == NEW) gen_array(rand_eng, rng, mode, base_array, n, max_num);
                 for (int j = 0; j < n; j++) {
                     radix_array[j].value = base_array[j];
                 }

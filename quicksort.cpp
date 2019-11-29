@@ -11,11 +11,10 @@ int partition(int *a, int left, int right) {
 
     int curr_index = left;
     int i;
-		int holder;
 
     for(i = left; i < right; i++) {
     	if(a[i] <= pivot) {
-						swap(a,i,curr_index);
+            swap(a,i,curr_index);
             curr_index++;
         }
      }
@@ -28,7 +27,7 @@ int partition(int *a, int left, int right) {
  void Quicksort(int *a,int left,int right) {
     if(left < right) {
          int curr_index = partition(a,left,right);
-				 Quicksort(a,left, curr_index-1);
-				 Quicksort(a,curr_index+1, right);
+         Quicksort(a,left, curr_index-1);
+         Quicksort(a,curr_index+1, right);
     }
 }
