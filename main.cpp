@@ -82,6 +82,7 @@ int main(int argc, char** argv) {
         rep_mode = NEW;
     } else {
         fprintf(stderr, "[!] Unknown rep mode '%s' (must be one of 'same' or 'new')!\n", argv[6]);
+        return 1;
     }
 
     int max_num = atoi(argv[7]);
