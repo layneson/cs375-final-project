@@ -16,5 +16,8 @@ The 'sort' program takes the following mandatory arguments, in order:
   - max radix: The maximum base to test with radix sort.
 
 The 'sort' program will create three output CSV files in the 'output' folder.
-Running 'python3 plotsorts.py' will create graphs from these CSV files based
-on the current code within the script.
+
+Running 'python3 plotsorts.py' will run 'sort' to create graphs based
+on the current code within the script. It requires pandas, numpy, and
+matplotlib as dependencies. The graphs are displayed in a GUI and
+saved to the 'output' directory.
