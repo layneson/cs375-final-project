@@ -3,74 +3,97 @@ import numpy as np
 from numpy.polynomial.polynomial import polyfit
 import matplotlib.pyplot as plt
 import sys
+import subprocess
 
+def read_csvs():
+    data_m  = pd.read_csv("output/merge.csv")
+    data_q  = pd.read_csv("output/quick.csv")
+    data_r  = pd.read_csv("output/radix.csv")
+
+    return (data_m, data_q, data_r)
+
+
+def display_graph(plot, x1, y1, x2, y2, x3, y3, label1, label2, label3, xlabel, ylabel, title):
+    plot.scatter(x1, y1, s=5, c='r', alpha = 0.6, label=label1)
+    plot.scatter(x2, y2, s=5, c='b', alpha = 0.6, label=label2)
+    plot.scatter(x3, y3, s=5, c='g', alpha = 0.6, label=label3)
+    
+    plot.set(xlabel=xlabel, ylabel=ylabel)
+    plot.set_title(title)
+
+"""
 plt.style.use('dark_background')
-# fig, ax = plt.subplots()
-plt.figure(figsize=(12,8))
+fig, plots = plt.subplots(2, 2, figsize=(24, 16), sharex=True, sharey=True)
 
-# reading in files. The log files are just CSVs of each algorithm's O(1) time * nlgn for even values 0 through 1500
-data_m  = pd.read_csv("output/merge.csv")
-data_q  = pd.read_csv("output/quick.csv")
-data_r  = pd.read_csv("output/radix.csv")
+subprocess.run(["./sort", "0", "random", "15000", "100", "5", "same", "1000", "16"])
 
-# only grab one radix for now.
-RADIX = 16
-if len(sys.argv) > 1:
-    RADIX = int(sys.argv[1])
-data_r = data_r.loc[data_r['r'] == RADIX]
+data_m, data_q, data_r = read_csvs()
+data_r16 = data_r.loc[data_r['r'] == 16]
+data_r2 = data_r.loc[data_r['r'] == 2]
 
-# data_log_m  = pd.read_csv("outputlogmerge.txt")
-# data_square_q  = pd.read_csv("outputsquarequick.txt")
+display_graph(plots[0, 0], data_q['n'], data_q['t'], data_m['n'], data_m['t'], data_r2['n'], data_r2['t'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Running Time (microseconds)", "Running Time vs Array Size with Max = 1000 and Radix Bits = 2")
+display_graph(plots[0, 1], data_q['n'], data_q['t'], data_m['n'], data_m['t'], data_r16['n'], data_r16['t'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Running Time (microseconds)", "Running Time vs Array Size with Max = 1000 and Radix Bits = 16")
 
-# files broken into their x and y components for plotting
-arrsize_m = data_m['n']
-runtime_m = data_m['t']
-arrsize_q = data_q['n']
-runtime_q = data_q['t']
-arrsize_r = data_r['n']
-runtime_r = data_r['t']
+subprocess.run(["./sort", "0", "random", "15000", "100", "5", "new", "1000000000", "16"])
 
-memory_m = data_m['m']
-memory_q = data_q['m']
-memory_r = data_r['m']
+data_m, data_q, data_r = read_csvs()
+data_r16 = data_r.loc[data_r['r'] == 16]
+data_r2 = data_r.loc[data_r['r'] == 2]
 
-# x = data_log_m['x']
-# xlgx = data_log_m['y']
-# x_short = data_square_q['x']
-# xx = data_square_q['y']
+display_graph(plots[1, 0], data_q['n'], data_q['t'], data_m['n'], data_m['t'], data_r16['n'], data_r2['t'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Running Time (microseconds)", "Running Time vs Array Size with Max = 1000000000 and Radix Bits = 2")
+display_graph(plots[1, 1], data_q['n'], data_q['t'], data_m['n'], data_m['t'], data_r16['n'], data_r16['t'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Running Time (microseconds)", "Running Time vs Array Size with Max = 1000000000 and Radix Bits = 16")
 
-# creating scatter plots for arraysize versus runtime
-plt.scatter(arrsize_q, runtime_q, s=5, c='r', alpha = 0.6, label='quicksort')
-plt.scatter(arrsize_m, runtime_m, s=5, c='b', alpha = 0.6, label='mergesort')
-plt.scatter(arrsize_r, runtime_r, s=5, c='g', alpha = 0.6, label='radixsort (radix = {})'.format(RADIX))
-
-# plotting lines of best fit on the subgraph
-# ax.plot(np.unique(arrsize_m), np.poly1d(np.polyfit(arrsize_m, runtime_m, 1))(np.unique(arrsize_m)), c='b')
-# ax.plot(np.unique(arrsize_q), np.poly1d(np.polyfit(arrsize_q, runtime_q, 1))(np.unique(arrsize_q)), c='r')
-# plt.plot(x,xlgx, c='b' ,label="150*(nlgn) : mergesort's upper bound")
-# plt.plot(x_short,xx, c ='r', label="150*(n^2) : quicksort's upper bound")
-
-#labeling & display
 plt.legend()
-plt.xlabel('Array Size')
-plt.ylabel('Runtime (microseconds)')
-plt.title('Runtime vs Array Size of Comparison and Non-Comparison Sorting Algorithms')
-
-plt.savefig("output/runtime.png")
-
+plt.savefig("output/plot.png")
 plt.show()
+"""
+########################################
+"""
+plt.style.use('dark_background')
+fig, plots = plt.subplots(1, 1, figsize=(12, 8), sharex=True, sharey=True)
 
-# secondary graph of memory.
-plt.figure(figsize=(12,8))
-plt.scatter(arrsize_q, memory_q, s=5, c='r', alpha = 0.6, label='quicksort')
-plt.scatter(arrsize_m, memory_m, s=5, c='b', alpha = 0.6, label='mergesort')
-plt.scatter(arrsize_r, memory_r, s=5, c='g', alpha = 0.6, label='radixsort (radix = {})'.format(RADIX))
+subprocess.run(["./sort", "0", "sorted", "15000", "100", "5", "new", "1000000000", "16"])
+
+data_m, data_q, data_r = read_csvs()
+data_r16 = data_r.loc[data_r['r'] == 16]
+
+display_graph(plots, data_q['n'], data_q['t'], data_m['n'], data_m['t'], data_r16['n'], data_r16['t'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Running Time (microseconds)", "Running Time vs Array Size with Max = 1000000000, Radix Bits = 16, Presorted")
 
 plt.legend()
-plt.xlabel('Array Size')
-plt.ylabel('Memory Usage (bytes)')
-plt.title('Memory Usage vs Array Size of Comparison and Non-Comparison Sorting Algorithms')
+plt.savefig("output/plot.png")
+plt.show()
+"""
+#########################################
+plt.style.use('dark_background')
+fig, plots = plt.subplots(2, 2, figsize=(24, 16), sharex=True, sharey=True)
 
-plt.savefig("output/memory.png")
+subprocess.run(["./sort", "0", "random", "15000", "100", "5", "new", "1000", "16"])
 
+data_m, data_q, data_r = read_csvs()
+data_r16 = data_r.loc[data_r['r'] == 16]
+data_r2 = data_r.loc[data_r['r'] == 2]
+
+display_graph(plots[0, 0], data_q['n'], data_q['m'], data_m['n'], data_m['m'], data_r2['n'], data_r2['m'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Memory Usage (bytes)", "Memory Usage vs Array Size with Max = 1000, Radix Bits = 2")
+display_graph(plots[0, 1], data_q['n'], data_q['m'], data_m['n'], data_m['m'], data_r16['n'], data_r16['m'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Memory Usage (bytes)", "Memory Usage vs Array Size with Max = 1000, Radix Bits = 16")
+
+subprocess.run(["./sort", "0", "random", "15000", "100", "5", "new", "1000000000", "16"])
+
+data_m, data_q, data_r = read_csvs()
+data_r16 = data_r.loc[data_r['r'] == 16]
+data_r2 = data_r.loc[data_r['r'] == 2]
+
+display_graph(plots[1, 0], data_q['n'], data_q['m'], data_m['n'], data_m['m'], data_r2['n'], data_r2['m'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Memory Usage (bytes)", "Memory Usage vs Array Size with Max = 1000000000, Radix Bits = 2")
+display_graph(plots[1, 1], data_q['n'], data_q['m'], data_m['n'], data_m['m'], data_r16['n'], data_r16['m'], "Quicksort", "Mergesort", "Radix Sort", "Array Size",
+    "Memory Usage (bytes)", "Memory Usage vs Array Size with Max = 1000000000, Radix Bits = 16")
+
+plt.legend()
+plt.savefig("output/plot.png")
 plt.show()
