@@ -1,3 +1,6 @@
+Description: 
+Comparing linear and traditional sorting algorithms at a large scale with varying data parameters and visual output 
+
 Run 'make' to build the 'sort' program.
 
 The 'sort' program takes the following mandatory arguments, in order:
